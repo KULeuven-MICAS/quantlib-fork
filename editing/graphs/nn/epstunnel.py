@@ -55,5 +55,7 @@ class EpsTunnel(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         if torch.any(self._eps_in != self._eps_out):
-            x = self._eps_out * (x / self._eps_in)
+            #x = self._eps_out * (x / self._eps_in)
+            # diana edit 
+            x = x / (1/self._eps_out  * self._eps_in) 
         return x

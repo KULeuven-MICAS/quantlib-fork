@@ -63,7 +63,7 @@ class RequantiserApplier(NNModuleApplier):
         # create the requantiser
         new_target = id_
         new_module = Requantisation(mul=gamma_int, add=beta_int, zero=module_activation.zero, n_levels=module_activation.n_levels, D=self.D)
-
+        
         # add the requantiser to the graph...
         g.add_submodule(new_target, new_module)
         with g.graph.inserting_after(node_eps_in):

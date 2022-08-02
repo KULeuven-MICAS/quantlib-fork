@@ -14,8 +14,8 @@ from quantlib.editing.editing.editors import ComposedEditor
 # describe all activation nodes that need to be canonicalised...
 specifications = (
     ActivationSpecification(nn.ReLU,      NonModularTargets((torch.relu, torch.relu_, F.relu, F.relu_,), tuple())),
-    ActivationSpecification(nn.ReLU6,     NonModularTargets((F.relu6,),                                  tuple())),
-    ActivationSpecification(nn.LeakyReLU, NonModularTargets((F.leaky_relu, F.leaky_relu_,),              tuple())),
+    #ActivationSpecification(nn.ReLU6,     NonModularTargets((F.relu6,),                                  tuple())),
+    #ActivationSpecification(nn.LeakyReLU, NonModularTargets((F.leaky_relu, F.leaky_relu_,),              tuple())),
 )
 
 # ... then programmatically create each `Rewriter`

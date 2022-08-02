@@ -57,6 +57,10 @@ class DORYAnnotator(ONNXAnnotator):
                 annotations.append(onnx.helper.make_attribute(key='add_bits', value=add_bits))
 
             elif op_type in dory_onnxnode_op_types['clip']:
+                print("CLIIPPEPED")
+                print("CLIIPPEPED")
+                print("CLIIPPEPED")
+                print("CLIIPPEPED")
                 clip_lo = get_onnxnode_attr_by_name(n, 'min').f
                 clip_hi = get_onnxnode_attr_by_name(n, 'max').f
                 assert np.log2(clip_hi + 1.0) % 1.0 < 1e-6  # TODO: document this choice

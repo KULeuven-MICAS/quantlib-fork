@@ -18,7 +18,7 @@ class ONNXExporter(object):
                input_shape:   torch.Size,
                path:          os.PathLike,
                name:          Optional[str] = None,
-               opset_version: int = 10) -> None:
+               opset_version: int = 11) -> None:
 
         # compute the name of the ONNX file
         onnxname     = name if name is not None else network._get_name()

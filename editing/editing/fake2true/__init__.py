@@ -69,7 +69,7 @@ class F2TConverter(ComposedEditor):
 
         editors_post = [
             EpsTunnelConstructSimplifier(),
-            EpsTunnelRemover(),
+            EpsTunnelRemover()
         ]
 
         super(F2TConverter, self).__init__(editors_pre + editors_custom + editors_post)

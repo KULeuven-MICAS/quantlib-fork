@@ -93,6 +93,7 @@ def propagate_under_tolerance(n: fx.Node,
 
         if torch.any(tolerance < diffs):  # I can not disambiguate the epsilon annotation
             eps_out = UNDEFINED_EPS
+            eps_out = torch.Tensor([1]) # DIANA: this was changed because we assums that the epsilons of the inputs of the add operation in the true quantization phase are all true quantized and therefore the eps_out can be set to 1
 
         else:  # we choose arbitrarily
             eps_out = eps_in[0]

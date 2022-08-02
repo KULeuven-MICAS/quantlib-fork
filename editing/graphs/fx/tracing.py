@@ -25,7 +25,7 @@ class CustomTracer(fx.Tracer):
         if len(leaf_types) == 0:
             raise ValueError(quantlib_err_header(obj_name=self.__class__.__name__) + "requires a non-empty list of `nn.Module`s to be treated as leaves.")
         self._leaf_types = leaf_types
-
+    
     def is_leaf_module(self, m: nn.Module, module_qualified_name: str) -> bool:
         """Extend the base class check to custom ``nn.Module``s."""
         fxtracer_cond = super().is_leaf_module(m, module_qualified_name)
