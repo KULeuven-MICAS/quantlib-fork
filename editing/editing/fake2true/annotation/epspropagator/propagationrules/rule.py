@@ -5,6 +5,8 @@ import torch.fx as fx
 
 from typing import Union
 
+from DianaModules.core.Operations import Accumulator
+
 from ...shapepropagator import ShapePropagator
 from quantlib.editing.graphs.fx import unpack_then_split_fxnode_arguments
 from quantlib.algorithms.qmodules.qmodules.qmodules import _QModule
@@ -164,6 +166,7 @@ _module_2_epspec = {
     nn.ReLU:      EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),  # TODO: I assume that zero is a valid quantisation level; e.g., the quantum of {-0.33, 0.17, 0.67} is 0.5, but the quantum of ReLU({-0.33, 0.17, 0.67}) = {0.0, 0.17, 0.67} is 0.01.
     nn.Identity:  EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
     nn.MaxPool1d: EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
+    Accumulator: EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}), # Diana edit 
     nn.MaxPool2d: EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
     nn.MaxPool3d: EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
     nn.AdaptiveAvgPool2d: EpsPropagationSpec(function=propagate_adaptiveavgpoolnd, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),  # TODO: This must be corrected: it just works if the effective spatial support has size 1x1.
