@@ -77,10 +77,13 @@ class _QModule(nn.Module):
         self.register_buffer('n_levels', torch.tile(n_levels, self._observer.broadcasting_shape))
         self.register_buffer('step',     torch.tile(step,     self._observer.broadcasting_shape))
         self.register_buffer('scale',    torch.tile(scale,    self._observer.broadcasting_shape))
-
+        self.register_buffer ('min_float' , torch.tile(torch.Tensor([0]) , self._observer.broadcasting_shape))
+        self.register_buffer ('max_float' , torch.tile(torch.Tensor([0]) , self._observer.broadcasting_shape))
     def _init_qhparams(self):
         """Finalise the creation of quantiser hyper-parameters."""
         a, b = self._qinitstrategy.get_a_b(self._observer)
+        self.min_float = a 
+        self.max_float = b 
         if self._pin_offset:
             scale = get_scale(a, b, self.zero, self.n_levels, self.step)
             self.scale.data.copy_(scale.to(device=self.scale.device))

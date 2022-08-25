@@ -3,6 +3,8 @@ import torch.nn as nn
 import torch.fx as fx
 from typing import Tuple, Dict, Any, Union, Optional, Callable, Type
 
+from DianaModules.core.Operations import AnalogAccumulator, AnalogGaussianNoise
+
 from ..nn import EpsTunnel, Requantisation
 from quantlib.algorithms.qmodules.qmodules.qmodules import _QModule
 from quantlib.utils import quantlib_err_header
@@ -43,7 +45,7 @@ class QuantLibTracer(CustomTracer):
         for instance, when creating containers of ``_QModule``s.
 
         """
-        quantlib_leaf_types = (_QModule, EpsTunnel, Requantisation,)
+        quantlib_leaf_types = (_QModule, EpsTunnel, Requantisation,AnalogAccumulator,AnalogGaussianNoise)
         leaf_types = (*quantlib_leaf_types, *other_leaf_types)
         super().__init__(leaf_types=leaf_types, *args, **kwargs)
 

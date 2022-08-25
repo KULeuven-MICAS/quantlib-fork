@@ -5,7 +5,7 @@ import torch.fx as fx
 
 from typing import Union
 
-from DianaModules.core.Operations import AnalogAccumulator
+from DianaModules.core.Operations import AnalogAccumulator, AnalogGaussianNoise
 
 from ...shapepropagator import ShapePropagator
 from quantlib.editing.graphs.fx import unpack_then_split_fxnode_arguments
@@ -69,12 +69,12 @@ def propagate_under_tolerance(n: fx.Node,
 
     # find the inputs that are epsilon-annotated
     eps_annotated_kwargs = tuple(filter(lambda input_: is_eps_annotated(input_), fxnode_kwargs.values()))
+    
     if len(eps_annotated_kwargs) > 0:
         raise RuntimeError("scale annotations must be limited to positional arguments.")
 
     eps_annotated_args = tuple(filter(lambda input_: is_eps_annotated(input_.fxnode), fxnode_args))
     eps_in = tuple(input_.fxnode.meta['eps'] for input_ in eps_annotated_args)
-
     # compute the scales of the output `torch.Tensor`
     if any((torch.any(e.isnan()) for e in eps_in)):  # I can't compute a numerical annotation
         eps_out = UNDEFINED_EPS
@@ -169,11 +169,11 @@ _module_2_epspec = {
     nn.ReLU:      EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),  # TODO: I assume that zero is a valid quantisation level; e.g., the quantum of {-0.33, 0.17, 0.67} is 0.5, but the quantum of ReLU({-0.33, 0.17, 0.67}) = {0.0, 0.17, 0.67} is 0.01.
     nn.Identity:  EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
     nn.MaxPool1d: EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
-    AnalogAccumulator: EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}), # Diana edit 
+    AnalogGaussianNoise: EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}), # Diana edit 
     nn.MaxPool2d: EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
     nn.MaxPool3d: EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
     nn.AdaptiveAvgPool2d: EpsPropagationSpec(function=propagate_adaptiveavgpoolnd, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),  # TODO: This must be corrected: it just works if the effective spatial support has size 1x1.
-    nn.Dropout: EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
+    nn.Dropout: EpsPropagationSpec(function=propagate_tq, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
 }
 
 
@@ -188,6 +188,6 @@ _method_2_epspec = {
 
 _function_2_epspec = {
     'flatten': EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
-    'add': EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': DEFAULT_TOLERANCE}),
-    'pad' : EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': DEFAULT_TOLERANCE}) 
+    'add': EpsPropagationSpec(function=propagate_tq, args=[], kwargs={'tolerance': DEFAULT_TOLERANCE}),
+    
 }
