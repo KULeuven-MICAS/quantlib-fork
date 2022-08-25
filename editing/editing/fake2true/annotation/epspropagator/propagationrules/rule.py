@@ -20,7 +20,7 @@ def is_eps_annotated(n: fx.Node) -> bool:
 
 
 ZERO_TOLERANCE    = 0.0
-DEFAULT_TOLERANCE = 1
+DEFAULT_TOLERANCE = 1e-8
 
 
 def propagate_undefined(n: fx.Node,
@@ -28,7 +28,6 @@ def propagate_undefined(n: fx.Node,
                         *args,
                         **kwargs) -> torch.Tensor:
     """Return an undefined quantiser scale.
-
     The ``fx.Node``s using floating-point parameters (e.g., ``nn.Linear``,
     ``nn.ConvNd``, ``nn.BatchNormNd``) as well as those not enforcing
     fake-quantised tensors.
@@ -42,13 +41,11 @@ def propagate_under_tolerance(n: fx.Node,
                               *args,
                               **kwargs):
     """Compute the scales associated with the output of an ``fx.Node``.
-
     This function can be applied to single-input as well as to multi-input
     ``fx.Node``s. In the case of single-input ``fx.Node``s, the output scales
     will be equal to the input quantum; therefore, if the input is not
     fake-quantised (i.e., `eps_ins == [float('nan')]`), also the output will
     be marked as not fake-quantised (`eps_out = float('nan')`).
-
     The case of multi-input operations is meant to handle variadic operations
     such as additions and concatenations, where the semantic of the result
     (i.e., the quantum of the fake-quantised array) should coincide with the
@@ -57,7 +54,6 @@ def propagate_under_tolerance(n: fx.Node,
     input fake-quantised arrays should coincide); we also allow for an
     approximated semantic equivalence by means of a non-negative tolerance
     parameter.
-
     In this last case, we verify that all the :math:`N` input quanta lie
     withing a given (either defined by the user or by the caller function)
     tolerance from each other. The computational cost of this verification
@@ -95,11 +91,19 @@ def propagate_under_tolerance(n: fx.Node,
 
         if torch.any(tolerance < diffs):  # I can not disambiguate the epsilon annotation
             eps_out = UNDEFINED_EPS
+
         else:  # we choose arbitrarily
             eps_out = eps_in[0]
 
     n.meta['eps'] = eps_out
 
+def propagate_tq(n: fx.Node,
+                             m: Union[None, nn.Module],
+                              tolerance: float = DEFAULT_TOLERANCE,
+                              *args,
+                              **kwargs): 
+    n.meta['eps'] = torch.Tensor([1])  # assume additions are are only performed in truq quantization
+     
 
 def propagate_qmodules(n: fx.Node,
                        m: _QModule,
@@ -161,7 +165,6 @@ def propagate_adaptiveavgpoolnd(n: fx.Node,
 
 EpsPropagationSpec = collections.namedtuple('EpsPropagationSpec', ['function', 'args', 'kwargs'])
 
-
 _module_2_epspec = {
     nn.ReLU:      EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),  # TODO: I assume that zero is a valid quantisation level; e.g., the quantum of {-0.33, 0.17, 0.67} is 0.5, but the quantum of ReLU({-0.33, 0.17, 0.67}) = {0.0, 0.17, 0.67} is 0.01.
     nn.Identity:  EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
@@ -186,4 +189,5 @@ _method_2_epspec = {
 _function_2_epspec = {
     'flatten': EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
     'add': EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': DEFAULT_TOLERANCE}),
+    'pad' : EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': DEFAULT_TOLERANCE}) 
 }

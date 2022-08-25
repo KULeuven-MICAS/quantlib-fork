@@ -34,13 +34,9 @@ class EpsTunnelRemoverFinder(Finder):
         epstunnels   = list(filter(lambda n: isinstance(g.get_submodule(target=n.target), EpsTunnel), module_nodes))  # since we consume the `filter` generator twice in the next lines, we must ensure that it does not get empty after the first consumption
 
         # filter out those `fx.Node`s that do not represent the identity or integerised inputs
-        #identitytunnels = filter(lambda n: EpsTunnelRemoverFinder.is_identity_epstunnel(g, n), epstunnels)
-        #integerisedplhl = filter(lambda n: EpsTunnelRemoverFinder.is_integerised_placeholder(g, n), epstunnels) Bugs
-        identityorintegrized = filter(lambda n: EpsTunnelRemoverFinder.is_identity_epstunnel(g, n)|EpsTunnelRemoverFinder.is_integerised_placeholder(g, n), epstunnels)
-        # TODO Diana EDIT 
-        new_list = [EpsTunnelNode(n) for n in identityorintegrized]
-        return new_list
-        #return [EpsTunnelNode(n) for n in list(identitytunnels) + list(integerisedplhl)]
+        identitytunnels = filter(lambda n: EpsTunnelRemoverFinder.is_identity_epstunnel(g, n), epstunnels)
+        integerisedplhl = filter(lambda n: EpsTunnelRemoverFinder.is_integerised_placeholder(g, n), epstunnels) 
+        return [EpsTunnelNode(n) for n in list(identitytunnels) + list(integerisedplhl)]
 
     def check_aps_commutativity(self, aps: List[EpsTunnelNode]) -> bool:
    
