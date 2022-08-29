@@ -92,7 +92,6 @@ class EpsPropagator(Annotator):
                     n.meta['eps'] = UNDEFINED_EPS
 
             elif n.op in FXOpcodeClasses.CALL_METHOD.value:
-                print("Calling method: " , n)
                 try:
                     
                     epspec = _method_2_epspec[n.target]
@@ -105,7 +104,6 @@ class EpsPropagator(Annotator):
                     continue  # TODO
 
             elif n.op in FXOpcodeClasses.CALL_FUNCTION.value:
-                print("Calling function: " , n)
                 try:
                     epspec = _function_2_epspec[n.target.__name__]
                     epspec.function(n, None, *copy.copy(epspec.args), **copy.copy(epspec.kwargs))

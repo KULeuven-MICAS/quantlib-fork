@@ -92,18 +92,13 @@ def propagate_under_tolerance(n: fx.Node,
         if torch.any(tolerance < diffs):  # I can not disambiguate the epsilon annotation
             eps_out = UNDEFINED_EPS
 
+
         else:  # we choose arbitrarily
             eps_out = eps_in[0]
 
     n.meta['eps'] = eps_out
 
-def propagate_tq(n: fx.Node,
-                             m: Union[None, nn.Module],
-                              tolerance: float = DEFAULT_TOLERANCE,
-                              *args,
-                              **kwargs): 
-    n.meta['eps'] = torch.Tensor([1])  # assume additions are are only performed in truq quantization
-     
+
 
 def propagate_qmodules(n: fx.Node,
                        m: _QModule,
@@ -173,7 +168,7 @@ _module_2_epspec = {
     nn.MaxPool2d: EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
     nn.MaxPool3d: EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
     nn.AdaptiveAvgPool2d: EpsPropagationSpec(function=propagate_adaptiveavgpoolnd, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),  # TODO: This must be corrected: it just works if the effective spatial support has size 1x1.
-    nn.Dropout: EpsPropagationSpec(function=propagate_tq, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
+    nn.Dropout: EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
 }
 
 
@@ -188,6 +183,6 @@ _method_2_epspec = {
 
 _function_2_epspec = {
     'flatten': EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
-    'add': EpsPropagationSpec(function=propagate_tq, args=[], kwargs={'tolerance': DEFAULT_TOLERANCE}),
+    'add': EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': DEFAULT_TOLERANCE}),
     
 }

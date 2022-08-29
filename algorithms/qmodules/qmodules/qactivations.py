@@ -69,7 +69,7 @@ class QReLU(_QActivation, nn.ReLU):
 
     def _call_qop(self, x: torch.Tensor) -> torch.Tensor:
         raise NotImplementedError
-
+    
     @classmethod
     def from_fp_module(cls,
                        fpm:                      nn.ReLU,

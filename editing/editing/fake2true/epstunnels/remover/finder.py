@@ -36,6 +36,7 @@ class EpsTunnelRemoverFinder(Finder):
         # filter out those `fx.Node`s that do not represent the identity or integerised inputs
         identitytunnels = filter(lambda n: EpsTunnelRemoverFinder.is_identity_epstunnel(g, n), epstunnels)
         integerisedplhl = filter(lambda n: EpsTunnelRemoverFinder.is_integerised_placeholder(g, n), epstunnels) 
+       
         return [EpsTunnelNode(n) for n in list(identitytunnels) + list(integerisedplhl)]
 
     def check_aps_commutativity(self, aps: List[EpsTunnelNode]) -> bool:
