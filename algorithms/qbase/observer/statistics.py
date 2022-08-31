@@ -54,8 +54,10 @@ class TensorStatistic(object):
         raise NotImplementedError
 
     def update(self, t: torch.Tensor) -> None:
+    
         self._check_t(t)
         self._update(t)
+        
 
 
 class NStatistic(TensorStatistic):
@@ -78,6 +80,7 @@ class NStatistic(TensorStatistic):
             self._payload = StatisticPayload(n_subpopulations, n)
         else:
             n = torch.ones(self._payload.n_subpopulations) * n
+            
             self._check_n_overflow(n)
             self._payload.values = self._payload.values + n
 

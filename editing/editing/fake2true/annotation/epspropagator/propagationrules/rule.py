@@ -91,19 +91,72 @@ def propagate_under_tolerance(n: fx.Node,
 
         if torch.any(tolerance < diffs):  # I can not disambiguate the epsilon annotation
             eps_out = UNDEFINED_EPS
-
+            eps_out =  torch.Tensor([1]) # TODO REMOVE THIS 
 
         else:  # we choose arbitrarily
             eps_out = eps_in[0]
 
     n.meta['eps'] = eps_out
 
+def propagate_pad(n: fx.Node,
+                       m: _QModule,
+                        tolerance: float = DEFAULT_TOLERANCE,
+                       *args,
+                       **kwargs): 
+    predecessors = [p for p in n.all_input_nodes] 
+    node = n 
+  
+    if len (predecessors) ==1 and 'getitem' in str( predecessors[0]): 
+        print("get item ") 
+        node = predecessors[0]
+
+
+    
+    if tolerance < ZERO_TOLERANCE:
+        raise ValueError("tolerance must be non-negative.")
+
+    # unpack the `fx.Node`'s inputs
+    fxnode_args, _, fxnode_kwargs, _ = unpack_then_split_fxnode_arguments(node)
+
+    # find the inputs that are epsilon-annotated
+    eps_annotated_kwargs = tuple(filter(lambda input_: is_eps_annotated(input_), fxnode_kwargs.values()))
+    
+    if len(eps_annotated_kwargs) > 0:
+        raise RuntimeError("scale annotations must be limited to positional arguments.")
+
+    eps_annotated_args = tuple(filter(lambda input_: is_eps_annotated(input_.fxnode), fxnode_args))
+    eps_in = tuple(input_.fxnode.meta['eps'] for input_ in eps_annotated_args)
+    # compute the scales of the output `torch.Tensor`
+    if any((torch.any(e.isnan()) for e in eps_in)):  # I can't compute a numerical annotation
+        eps_out = UNDEFINED_EPS
+
+    else:
+        # TODO: In the case of variadic inputs, we assume that all input
+        #       arrays have the same shape, and anyway compatible granularity;
+        #       we might want to support more precise comparisons and
+        #       mixed-granularity in the future.
+        flattened_eps_in = torch.vstack(tuple(map(lambda t: torch.flatten(t), eps_in)))
+        min_eps = flattened_eps_in.amin(0)
+        max_eps = flattened_eps_in.amax(0)
+        diffs   = max_eps - min_eps  # should be equal to `torch.abs(max_eps - min_eps)` since scales are non-negative
+
+        if torch.any(tolerance < diffs):  # I can not disambiguate the epsilon annotation
+            eps_out = UNDEFINED_EPS
+           
+
+        else:  # we choose arbitrarily
+            eps_out = eps_in[0]
+
+    n.meta['eps'] = eps_out
+   
 
 
 def propagate_qmodules(n: fx.Node,
-                       m: _QModule,
-                       *args,
-                       **kwargs):
+                              m: Union[None, nn.Module],
+                              tolerance: float = DEFAULT_TOLERANCE,
+                              *args,
+                              **kwargs):
+    
 
     # unpack the `fx.Node`'s inputs
     fxnode_args, _, fxnode_kwargs, _ = unpack_then_split_fxnode_arguments(n)
@@ -145,10 +198,8 @@ def propagate_adaptiveavgpoolnd(n: fx.Node,
 
         p = eps_annotated_args[0].fxnode  # unique predecessor
         if ShapePropagator.is_shape_annotated(p):
-            if n.meta['tensor_meta'].shape == p.meta['tensor_meta'].shape:
-                eps_out = p.meta['eps']
-            else:
-                eps_out = UNDEFINED_EPS
+            eps_out = p.meta['eps']
+            
         else:
             eps_out = UNDEFINED_EPS
 
@@ -184,5 +235,5 @@ _method_2_epspec = {
 _function_2_epspec = {
     'flatten': EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
     'add': EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': DEFAULT_TOLERANCE}),
-    
+    'pad':    EpsPropagationSpec(function=propagate_pad, args=[], kwargs={'tolerance': DEFAULT_TOLERANCE}),
 }

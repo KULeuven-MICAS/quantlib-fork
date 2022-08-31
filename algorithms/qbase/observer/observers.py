@@ -120,11 +120,11 @@ class MinMaxMeanVarObserver(TensorObserver):
 
     @property
     def mean(self) -> torch.Tensor:
-        return self._make_broadcastable(self._statistics['sum'].payload.values) / self.n
+        return self._make_broadcastable(self._statistics['sum'].payload.values) / self.n.to(self._statistics['sum'].payload.values.device)
 
     @property
     def var(self) -> torch.Tensor:
-        return self._make_broadcastable(self._statistics['sum2'].payload.values) / self.n - self.mean.pow(2)
+        return self._make_broadcastable(self._statistics['sum2'].payload.values) / self.n.to(self._statistics['sum2'].payload.values.device) - self.mean.pow(2)
 
 
 """Track the statistics of a collection of arrays.
