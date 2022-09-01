@@ -12,7 +12,7 @@ class AddTreeApplier(Applier):
     def __init__(self,
                  qdescriptionspec: QDescriptionSpecType,
                  use_output_scale: bool):
-
+      
         qdescription = resolve_qdescriptionspec(qdescriptionspec)
 
         super(AddTreeApplier, self).__init__()

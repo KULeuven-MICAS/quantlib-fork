@@ -91,7 +91,7 @@ def propagate_under_tolerance(n: fx.Node,
 
         if torch.any(tolerance < diffs):  # I can not disambiguate the epsilon annotation
             eps_out = UNDEFINED_EPS
-            eps_out =  torch.Tensor([1]) # TODO REMOVE THIS 
+            #eps_out =  torch.Tensor([1]) # TODO REMOVE THIS 
 
         else:  # we choose arbitrarily
             eps_out = eps_in[0]
