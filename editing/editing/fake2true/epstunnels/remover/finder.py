@@ -26,7 +26,13 @@ class EpsTunnelRemoverFinder(Finder):
         m = g.get_submodule(target=n.target)
 
         return (predecessor.op in FXOpcodeClasses.PLACEHOLDER.value) and torch.all(m.eps_out == 1.0)
-
+    # if output return False 
+    def is_output_node(g , n): 
+        users = [u for u in n.users] 
+        if len(users)==1: 
+            if(users[0].op in FXOpcodeClasses.OUTPUT.value) : 
+                return False 
+        return True 
     def find(self, g: fx.GraphModule) -> List[EpsTunnelNode]:
 
         # find `EpsTunnel` `fx.Node`s
@@ -36,8 +42,9 @@ class EpsTunnelRemoverFinder(Finder):
         # filter out those `fx.Node`s that do not represent the identity or integerised inputs
         identitytunnels = filter(lambda n: EpsTunnelRemoverFinder.is_identity_epstunnel(g, n), epstunnels)
         integerisedplhl = filter(lambda n: EpsTunnelRemoverFinder.is_integerised_placeholder(g, n), epstunnels) 
-       
-        return [EpsTunnelNode(n) for n in list(identitytunnels) + list(integerisedplhl)]
+        ls = list(identitytunnels) + list(integerisedplhl)
+        not_output_node = filter(lambda n: EpsTunnelRemoverFinder.is_output_node(g, n), ls)
+        return [EpsTunnelNode(n) for n in list(not_output_node)] 
 
     def check_aps_commutativity(self, aps: List[EpsTunnelNode]) -> bool:
    

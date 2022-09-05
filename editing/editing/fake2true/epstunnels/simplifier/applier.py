@@ -12,9 +12,8 @@ class EpsTunnelConstructApplier(Applier):
    
         # integerise the arrays entering the construct
         #for node in ap.backward: 
-        #    predecessor = [p for p in node.all_input_nodes]
         #    users = [u for u in node.users] 
-        #    print(f'For {node} with construct', " and users : " ,*users ) 
+        #    print("Construct simplifier found node " , *users , f" has the node {node} as a predecessor ") 
         inbound_eps_tunnels = tuple(map(lambda n: g.get_submodule(target=n.target), ap.backward))
         for m in inbound_eps_tunnels:
             m.set_eps_out(torch.ones_like(m.eps_out))

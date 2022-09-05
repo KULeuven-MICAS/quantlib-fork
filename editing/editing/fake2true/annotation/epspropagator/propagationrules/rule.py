@@ -5,7 +5,7 @@ import torch.fx as fx
 
 from typing import Union
 
-from DianaModules.core.Operations import AnalogAccumulator, AnalogGaussianNoise
+from DianaModules.core.Operations import AnalogGaussianNoise
 
 from ...shapepropagator import ShapePropagator
 from quantlib.editing.graphs.fx import unpack_then_split_fxnode_arguments
@@ -91,7 +91,6 @@ def propagate_under_tolerance(n: fx.Node,
 
         if torch.any(tolerance < diffs):  # I can not disambiguate the epsilon annotation
             eps_out = UNDEFINED_EPS
-            #eps_out =  torch.Tensor([1]) # TODO REMOVE THIS 
 
         else:  # we choose arbitrarily
             eps_out = eps_in[0]
@@ -107,7 +106,7 @@ def propagate_pad(n: fx.Node,
     node = n 
   
     if len (predecessors) ==1 and 'getitem' in str( predecessors[0]): 
-        print("get item ") 
+
         node = predecessors[0]
 
 
