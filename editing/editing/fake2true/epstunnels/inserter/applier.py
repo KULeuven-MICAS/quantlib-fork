@@ -1,7 +1,5 @@
 import torch.fx as fx
 
-from DianaModules.core.Operations import DIANALinear
-
 from .applicationpoint import EpsTunnelNode
 # from quantlib.editing.editing.fake2true.annotation.epspropagator.propagationrules import is_eps_annotated  # TODO: see below
 from quantlib.editing.editing.editors import Applier
