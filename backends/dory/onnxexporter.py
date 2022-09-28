@@ -52,7 +52,7 @@ class DORYExporter(ONNXExporter):
         features: List[Features] = []
 
         def hook_fn(self, in_: torch.Tensor, out_: torch.Tensor, module_name: str):
-            assert (out_.ndim == 4) and (out_.shape[0] == 1)  # TODO: we are tacitly assuming that we will capture only features of 2D-conv networks (i.e., 4D feature arrays)
+            #assert (out_.ndim == 4) and (out_.shape[0] == 1)  # TODO: we are tacitly assuming that we will capture only features of 2D-conv networks (i.e., 4D feature arrays) TODO: BAKR FIX THIS LATER
             # DORY wants HWC tensors
             features.append(Features(module_name=module_name, features=out_.squeeze(0)))
 
