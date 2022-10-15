@@ -99,7 +99,7 @@ class _PACTActivation(_PACTModule):
                     b = -a
                     self._check_clipping_bounds(a, b)
                     scale = get_scale(a, b, self.zero, self.n_levels, self.step)
-                    self.scale.data.copy_(scale.to(device=self.scale.device))
+                    self.scale.data.copy_(scale)
 
                 elif self._pact_learnable_bounds == PACTLearnableClippingBounds.CLIP_HI:
                     assert self._pin_offset
@@ -108,7 +108,7 @@ class _PACTActivation(_PACTModule):
                     assert torch.all(a == 0.0)
                     self._check_clipping_bounds(a, b)
                     scale = get_scale(a, b, self.zero, self.n_levels, self.step)
-                    self.scale.data.copy_(scale.to(device=self.scale.device))
+                    self.scale.data.copy_(scale)
 
                 else:  # self._pact_learnable_bounds == PACTLearnableClippingBounds.CLIP_LO_AND_CLIP_HI
                     a = self.clip_lo.data
@@ -116,11 +116,11 @@ class _PACTActivation(_PACTModule):
                     self._check_clipping_bounds(a, b)
                     if self._pin_offset:
                         scale = get_scale(a, b, self.zero, self.n_levels, self.step)
-                        self.scale.data.copy_(scale.to(device=self.scale.device))
+                        self.scale.data.copy_(scale)
                     else:
                         zero, scale = get_zero_scale(a, b, self.n_levels, self.step)
-                        self.zero.data.copy_(zero.to(device=self.scale.device))
-                        self.scale.data.copy_(scale.to(device=self.scale.device))
+                        self.zero.data.copy_(zero)
+                        self.scale.data.copy_(scale)
 
                 self._set_clipping_bounds()
 

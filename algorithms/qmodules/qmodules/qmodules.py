@@ -15,7 +15,6 @@ from quantlib.algorithms.qbase import MinMaxMeanVarObserver
 from quantlib.utils import UNKNOWN
 from quantlib.utils import quantlib_err_header
 
-
 class _QModule(nn.Module):
 
     def __init__(self,
@@ -86,11 +85,11 @@ class _QModule(nn.Module):
         self.max_float = b 
         if self._pin_offset:
             scale = get_scale(a, b, self.zero, self.n_levels, self.step)
-            self.scale.data.copy_(scale.to(device=self.scale.device))
+            self.scale.data.copy_(scale)
         else:
             zero, scale = get_zero_scale(a, b, self.n_levels, self.step)
-            self.zero.data.copy_(zero.to(device=self.scale.device))
-            self.scale.data.copy_(scale.to(device=self.scale.device))
+            self.zero.data.copy_(zero)
+            self.scale.data.copy_(scale)
         self._is_quantised |= True
 
     def _create_clipping_bounds(self):
