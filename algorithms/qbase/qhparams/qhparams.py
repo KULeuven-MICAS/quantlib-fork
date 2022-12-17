@@ -112,7 +112,7 @@ def get_scale(a: torch.Tensor,
     """Compute the quantum of a quantisation range with fixed offset."""
     _check_a_b(a, b)
 
-    # TODO: find a more elegant way to ensure that the parameters are on the same device (attribute this responsibility to the right objects) #Bakr: Not needed because of lightning
+    # TODO: find a more elegant way to ensure that the parameters are on the same device (attribute this responsibility to the right objects) 
     a = a.to(zero.device) 
     b = b.to(zero.device) 
     where_a_negative = a < 0.0

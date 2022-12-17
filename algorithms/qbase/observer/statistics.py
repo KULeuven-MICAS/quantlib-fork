@@ -98,6 +98,7 @@ class MinStatistic(TensorStatistic):
             n_subpopulations = t.shape[0]
             self._payload = StatisticPayload(n_subpopulations, min_)
         else:
+            min_ =  min_.to(self._payload.values.device)
             self._payload.values = torch.min(self._payload.values, min_)
 
 
@@ -114,6 +115,7 @@ class MaxStatistic(TensorStatistic):
             n_subpopulations = t.shape[0]
             self._payload = StatisticPayload(n_subpopulations, max_)
         else:
+            max_ =  max_.to(self._payload.values.device)
             self._payload.values = torch.max(self._payload.values, max_)
 
 
@@ -130,6 +132,7 @@ class SumStatistic(TensorStatistic):
             n_subpopulations = t.shape[0]
             self._payload = StatisticPayload(n_subpopulations, sum_)
         else:
+            sum_ =  sum_.to(self._payload.values.device)
             self._payload.values = self._payload.values + sum_
 
 
@@ -146,4 +149,5 @@ class Sum2Statistic(TensorStatistic):
             n_subpopulations = t.shape[0]
             self._payload = StatisticPayload(n_subpopulations, sum2)
         else:
+            sum2 =  sum2.to(self._payload.values.device)
             self._payload.values = self._payload.values + sum2
