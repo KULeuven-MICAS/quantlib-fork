@@ -3,6 +3,7 @@ from typing import Tuple, Union, NewType
 
 from quantlib.utils import quantlib_err_header
 
+qrangespec = {"bitwidth": 8 , "signed":True}
 
 # The data type representing quantisation granularity. QuantLib modules will
 # instantiate a separate quantiser for each of the specified dimensions. The

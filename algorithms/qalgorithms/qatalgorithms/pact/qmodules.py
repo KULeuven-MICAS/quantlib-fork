@@ -146,14 +146,55 @@ class _PACTLinear(_PACTModule):
         _PACTModule.__init__(self)
 
     def _flag_bounds_as_learnable(self):
-        pass
+        if self._pact_learnable_bounds == PACTLearnableClippingBounds.CLIP_LO:
+            assert self._pin_offset
+            self.clip_lo.requires_grad = True
+
+        elif self._pact_learnable_bounds == PACTLearnableClippingBounds.CLIP_HI:
+            assert self._pin_offset
+            self.clip_hi.requires_grad = True
+
+        else:  # self._pact_learnable_bounds == PACTLearnableClippingBounds.CLIP_LO_AND_CLIP_HI
+            self.clip_lo.requires_grad = True
+            self.clip_hi.requires_grad = True
 
     def _update_qhparams_and_clipping_bounds(self):
 
         if self._clipping_bounds_are_frozen:
             pass
         else:
-            self.init_qhparams()
+            with torch.no_grad():
+
+                if self._pact_learnable_bounds == PACTLearnableClippingBounds.CLIP_LO:
+                    assert self._pin_offset
+                    a = self.clip_lo.data
+                    b = -a
+                    self._check_clipping_bounds(a, b)
+                    scale = get_scale(a, b, self.zero, self.n_levels, self.step)
+                    self.scale.data.copy_(scale)
+
+                elif self._pact_learnable_bounds == PACTLearnableClippingBounds.CLIP_HI:
+                    assert self._pin_offset
+                    a = self.clip_lo.data
+                    b = self.clip_hi.data
+                    assert torch.all(a == 0.0)
+                    self._check_clipping_bounds(a, b)
+                    scale = get_scale(a, b, self.zero, self.n_levels, self.step)
+                    self.scale.data.copy_(scale)
+
+                else:  # self._pact_learnable_bounds == PACTLearnableClippingBounds.CLIP_LO_AND_CLIP_HI
+                    a = self.clip_lo.data
+                    b = self.clip_hi.data
+                    self._check_clipping_bounds(a, b)
+                    if self._pin_offset:
+                        scale = get_scale(a, b, self.zero, self.n_levels, self.step)
+                        self.scale.data.copy_(scale)
+                    else:
+                        zero, scale = get_zero_scale(a, b, self.n_levels, self.step)
+                        self.zero.data.copy_(zero)
+                        self.scale.data.copy_(scale)
+
+                self._set_clipping_bounds()
 
     def call_qop(self, x: torch.Tensor) -> torch.Tensor:
         self._update_qhparams_and_clipping_bounds()
