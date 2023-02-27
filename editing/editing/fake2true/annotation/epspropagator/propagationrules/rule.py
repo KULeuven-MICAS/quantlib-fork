@@ -219,6 +219,8 @@ _module_2_epspec = {
     nn.MaxPool3d: EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
     nn.AdaptiveAvgPool2d: EpsPropagationSpec(function=propagate_adaptiveavgpoolnd, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),  # TODO: This must be corrected: it just works if the effective spatial support has size 1x1.
     nn.Dropout: EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
+    nn.Dropout2d: EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
+    nn.Flatten: EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
 }
 
 
@@ -226,6 +228,7 @@ _module_2_epspec.update({_QModule: EpsPropagationSpec(function=propagate_qmodule
 
 
 _method_2_epspec = {
+    'reshape': EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
     'view':   EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': ZERO_TOLERANCE}),
     'add':    EpsPropagationSpec(function=propagate_under_tolerance, args=[], kwargs={'tolerance': DEFAULT_TOLERANCE}),
 }
