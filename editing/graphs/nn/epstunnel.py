@@ -22,8 +22,8 @@ class EpsTunnel(nn.Module):
 
         """
         super(EpsTunnel, self).__init__()
-        self._eps_in  = eps  # TODO: make these attributes "buffers" (so that moving the enclosing `nn.Module` to GPU also affects them)
-        self._eps_out = eps
+        self.register_buffer('_eps_in', eps)
+        self.register_buffer('_eps_out', eps)
 
     @property
     def eps_in(self) -> torch.Tensor:
@@ -58,8 +58,6 @@ class EpsTunnel(nn.Module):
         self._eps_in = self._eps_in.to(x.device)
         if torch.any(self._eps_in != self._eps_out):
             #x = self._eps_out * (x / self._eps_in)
-            # diana edit 
-            
-            
-            x = x / (1/self._eps_out  * self._eps_in) 
+            # diana edit
+            x = x / (1/self._eps_out  * self._eps_in)
         return x
