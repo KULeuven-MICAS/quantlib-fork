@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.fx as fx
 from typing import Tuple, Dict, Any, Union, Optional, Callable, Type
 
-from DianaModules.core.Operations import AnalogAccumulator, AnalogGaussianNoise
+from dianaquantlib.core.Operations import AnalogAccumulator, AnalogGaussianNoise
 
 from ..nn import EpsTunnel, Requantisation
 from quantlib.algorithms.qmodules.qmodules.qmodules import _QModule

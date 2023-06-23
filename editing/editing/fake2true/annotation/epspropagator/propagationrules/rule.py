@@ -5,7 +5,7 @@ import torch.fx as fx
 
 from typing import Union
 
-from DianaModules.core.Operations import AnalogGaussianNoise
+from dianaquantlib.core.Operations import AnalogGaussianNoise
 
 from ...shapepropagator import ShapePropagator
 from quantlib.editing.graphs.fx import unpack_then_split_fxnode_arguments
