@@ -1,4 +1,4 @@
-"""Some rewriting rules look for classes of patterns that it is unfeasible or
+r"""Some rewriting rules look for classes of patterns that it is unfeasible or
 simply not convenient to fully enumerate. In these cases, we replace pattern
 matching with specific algorithms that can capture any pattern that we are
 interested into.

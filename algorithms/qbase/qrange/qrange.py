@@ -11,7 +11,7 @@ IMPLICIT_STEP = 1
 
 
 class QRange(object):
-    """A class to represent integer indexings of bin collections.
+    r"""A class to represent integer indexings of bin collections.
 
     Quantisation if a form of information compression. Given a base set
     :math:`X`, we can quantise it into :math:`K > 1` bins by creating or
@@ -265,7 +265,7 @@ QRangeSpecSolvers = Enum('QRangeSpecSolvers',
 
 
 def resolve_qrangespec(qrangespec: QRangeSpecType) -> QRange:
-    """A function to canonicalise specifications of integer ranges.
+    r"""A function to canonicalise specifications of integer ranges.
 
     During my experience in research on quantised neural networks I have come
     across several ways of describing integer ranges.

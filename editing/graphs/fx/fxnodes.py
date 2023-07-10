@@ -91,7 +91,7 @@ class IDdFxNodeArg(NamedTuple):
 
 
 def unpack_then_split_fxnode_arguments(n: fx.Node) -> Tuple[Tuple[IDdFxNodeArg, ...], Tuple[FxNodeArgType, ...], Dict[str, fx.Node], Dict[str, FxNodeArgType]]:
-    """Retrieve and partition the inputs to an ``fx.Node``.
+    r"""Retrieve and partition the inputs to an ``fx.Node``.
 
     Each ``fx.Node`` represents the execution of an operation in the flow of
     the target network. Each operation is implemented as a Python function.
