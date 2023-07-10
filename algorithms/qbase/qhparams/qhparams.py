@@ -1,4 +1,4 @@
-"""Handle the interchangeability of offsets, quanta, and clipping bounds.
+r"""Handle the interchangeability of offsets, quanta, and clipping bounds.
 
 Given a quantiser, its offset :math:`z`, quantum :math:`\varepsilon` and
 number of levels :math:`N` are related to the clipping bounds :math:`alpha`
@@ -68,7 +68,7 @@ def get_zero_scale(a: torch.Tensor,
                    b: torch.Tensor,
                    n_levels: torch.Tensor,
                    step: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
-    """Compute the offset and quantum to cover an interval with given bounds.
+    r"""Compute the offset and quantum to cover an interval with given bounds.
 
     To ensure fake-to-true convertibility, it is crucial that fake-quantised
     ranges are compatible with all the values that are used at training time,

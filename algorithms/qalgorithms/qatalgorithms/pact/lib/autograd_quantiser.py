@@ -3,7 +3,7 @@ from typing import Tuple
 
 
 class _PACTQuantiser(torch.autograd.Function):
-    """PACT (PArametrized Clipping acTivation) quantisation function.
+    r"""PACT (PArametrized Clipping acTivation) quantisation function.
 
     This function acts component-wise on the input array. In the forward pass,
     it applies the following operation:
@@ -45,7 +45,7 @@ class _PACTQuantiser(torch.autograd.Function):
                 scale: torch.Tensor,
                 round: bool = False,
                 clip_g: bool = True) -> torch.Tensor:
-        """Compute the forward pass of the PACT operation.
+        r"""Compute the forward pass of the PACT operation.
 
         Arguments:
             x: the array to be quantised.
