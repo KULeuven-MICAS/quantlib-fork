@@ -71,7 +71,7 @@ class NNModulePattern(object):
                               pn:         fx.Node,
                               dn:         fx.Node,
                               data_gm:    fx.GraphModule) -> bool:
-        """Compare the semantic attributes of two nodes.
+        r"""Compare the semantic attributes of two nodes.
 
         Given a graph rewriting rule :math:`\rho = (K, L, R)`, a sub-graph
         :math:`H` of the target graph :math:`G` is a **match** for the pattern

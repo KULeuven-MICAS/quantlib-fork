@@ -13,7 +13,7 @@ from quantlib.utils.messages import quantlib_wng_header
 class PathGraphMatcher(NNModuleMatcher):
 
     def __init__(self, pattern: NNSequentialPattern):
-        """An object to identify path sub-graphs into a target graph.
+        r"""An object to identify path sub-graphs into a target graph.
 
         **Path graphs** are amongst the simplest directed graphs. A path graph
         is a graph :math:`G = (V_{G}, E_{G})` such that there exists an
