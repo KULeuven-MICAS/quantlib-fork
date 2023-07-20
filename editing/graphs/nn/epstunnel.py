@@ -54,4 +54,4 @@ class EpsTunnel(nn.Module):
         self._eps_out = eps
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self._eps_out * (x / self._eps_in)
+        return x / (self._eps_in / self._eps_out)
